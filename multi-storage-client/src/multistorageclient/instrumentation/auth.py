@@ -168,11 +168,18 @@ class VaultCertificateProvider(CertificateProvider):
         except (OSError, json.JSONDecodeError):
             return None
 
+    def _ensure_cert_cache_dir(self) -> str:
+        """Ensure the certificate cache directory exists with safe permissions."""
+        cert_dir = self._get_cert_cache_dir()
+        os.makedirs(cert_dir, mode=0o700, exist_ok=True)
+        return cert_dir
+
     def _write_cache_metadata(self) -> None:
         """Write cache metadata (config fingerprint) to disk."""
         metadata = {
             "config_fingerprint": self._compute_config_fingerprint(),
         }
+        self._ensure_cert_cache_dir()
         metadata_path = self._get_cache_metadata_path()
         with open(metadata_path, "w") as f:
             json.dump(metadata, f)
@@ -335,8 +342,7 @@ class VaultCertificateProvider(CertificateProvider):
         :param cert_data: Dictionary containing certificate data
         :return: CertificatePaths with paths to written files
         """
-        cert_dir = self._get_cert_cache_dir()
-        os.makedirs(cert_dir, mode=0o700, exist_ok=True)
+        cert_dir = self._ensure_cert_cache_dir()
 
         paths = self._get_cert_paths()
 
@@ -380,8 +386,7 @@ class VaultCertificateProvider(CertificateProvider):
             self._cached_paths = self._get_cert_paths()
             return self._cached_paths
 
-        cert_dir = self._get_cert_cache_dir()
-        os.makedirs(cert_dir, mode=0o700, exist_ok=True)
+        cert_dir = self._ensure_cert_cache_dir()
         lock_file = os.path.join(cert_dir, ".lock")
 
         with open(lock_file, "w") as lock_fd:
