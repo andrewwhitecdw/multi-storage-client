@@ -446,9 +446,10 @@ class AIStoreStorageProvider(BaseStorageProvider):
             with open(f, "wb") as fp:
                 fp.write(self._get_object(remote_path))
         else:
+            content = self._get_object(remote_path)
             if isinstance(f, io.StringIO):
-                f.write(self._get_object(remote_path).decode("utf-8"))
+                f.write(content.decode("utf-8"))
             else:
-                f.write(self._get_object(remote_path))
+                f.write(content)
 
         return metadata.content_length
