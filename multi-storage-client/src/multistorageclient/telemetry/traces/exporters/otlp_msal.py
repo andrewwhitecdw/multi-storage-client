@@ -48,6 +48,7 @@ class _OTLPMSALSpanExporter(OTLPSpanExporter):
                 backoff_factor=_OTLPMSALSpanExporter._BACKOFF_FACTOR,
                 connect=max_retries,
                 read=max_retries,
+                allowed_methods=["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE", "POST"],
             )
             super().__init__(*args, **kwargs)
             self._access_token_provider = access_token_provider
