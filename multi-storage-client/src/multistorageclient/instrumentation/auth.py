@@ -132,18 +132,17 @@ class VaultCertificateProvider(CertificateProvider):
         self._key_key = key_key
         self._ca_key = ca_key
         self._cached_paths: CertificatePaths | None = None
+        self._config_fingerprint = self._compute_config_fingerprint()
 
     def _get_cert_cache_dir(self) -> str:
         """Get the directory path for caching certificates."""
-        return os.path.join(tempfile.gettempdir(), "msc", "observability", "mtls")
+        return os.path.join(tempfile.gettempdir(), "msc", "observability", "mtls", self._config_fingerprint)
 
     def _compute_config_fingerprint(self) -> str:
-        """Compute a SHA-256 fingerprint of the auth config that determines which certs to fetch."""
+        """Compute a SHA-256 fingerprint of the non-sensitive auth config that identifies the cached certificates."""
         config_data = {
             "vault_endpoint": self._vault_endpoint,
             "vault_namespace": self._vault_namespace,
-            "approle_id": self._approle_id,
-            "approle_secret": self._approle_secret,
             "mount_point": self._mount_point,
             "secret_path": self._secret_path,
             "cert_key": self._cert_key,
