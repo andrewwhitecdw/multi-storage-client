@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class _OTLPMSALSpanExporter(OTLPSpanExporter):
     """
-    OTLP metric exporter with MSAL for auth.
+    OTLP span exporter with MSAL for auth.
     """
 
     _MAX_RETRIES = 5
@@ -68,7 +68,7 @@ class _OTLPMSALSpanExporter(OTLPSpanExporter):
     ):
         """
         :param auth: MSAL auth config dictionary.
-        :param exporter: OTLP metric exporter config dictionary.
+        :param exporter: OTLP span exporter config dictionary.
         """
 
         session = requests.Session()
